@@ -12,8 +12,17 @@ using Android.Graphics.Drawables;
 // Criado por Alexandre H.T.R. Bonfitto em 10/05/2017.
 // GitHub: https://github.com/alexandrehtrb/
 // E-mail: alexandrehtrb@outlook.com
-// Este projeto é uma View customizada que cria um efeito iridescente por cima de imagens.
+// Este projeto Ã© uma View customizada que cria um efeito iridescente por cima de imagens.
 // This project is a custom view for Xamarin.Android that creates an iridescent effect on top of images.
+
+
+
+
+// ***** Needs updates, see .java class for newest version. *****
+
+
+
+
 
 // This project is under the MIT license:
 
@@ -160,12 +169,12 @@ namespace Br.AlexandreHTRB
             g[2] = g[2] / g_norm;
 
             // Counter-clockwise (+) and clockwise (-), moving the device like a steering wheel.
-            // 0° when its base is parallel to the surface.
-            // Range from 180° to -180°.
+            // 0Â° when its base is parallel to the surface.
+            // Range from 180Â° to -180Â°.
             double roll = Math.Atan2(g[0], g[1]);
             // Forward (+) and backwards (-).
-            // 90° when the device's screen normal vector is perpendicular to the surface's normal vector.
-            // Range from 180° to -180º.
+            // 90Â° when the device's screen normal vector is perpendicular to the surface's normal vector.
+            // Range from 180Â° to -180Âº.
             double pitch = Math.Atan2(g[1], g[2]);
 			
 			// This avoids over-sensitivity of the accelerometer.
