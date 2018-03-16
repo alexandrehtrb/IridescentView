@@ -1,11 +1,5 @@
 package br.alexandrehtrb;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
-import static java.lang.Math.pow;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -23,6 +17,14 @@ import android.hardware.SensorManager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+
+import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.hypot;
+import static java.lang.Math.pow;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
 
 // Criado por Alexandre H.T.R. Bonfitto em 10/05/2017.
 // GitHub: https://github.com/alexandrehtrb/
@@ -66,13 +68,8 @@ public class IridescentView extends ImageView implements SensorEventListener {
             Color.parseColor("#77FF0000")
     };
 
-    private static final int[] BRIGHTNESS_COLORS = new int[] {
-            Color.parseColor("#00FFFFFF"),
-            Color.parseColor("#33FFFFFF")
-    };
-
     private static final double ANGLE_SENSITIVITY = 0.03d * (Math.PI / 180d);
-    private static final double ANGLE_SPEED = 0.25d;
+    private static final double NUMBER_OF_VISIBLE_COLORS = 2d;
 
     //region CONTEXT
     private Context context;
@@ -85,20 +82,18 @@ public class IridescentView extends ImageView implements SensorEventListener {
     //endregion
     //region BITMAPS
     private Bitmap original;
-    private Bitmap mask;
-    private Bitmap brightness;
+    private Bitmap iridescentOverlay;
     private Bitmap result;
     //endregion
     //region CANVAS
-    private Canvas maskCanvas = null;
-    private Canvas brightnessCanvas = null;
+    private Canvas iridescentCanvas = null;
     private Canvas resultCanvas = null;
     //endregion
     //region PAINTS
-    private Paint maskPaint = null;
-    private Paint brightnessPaint = null;
+    private Paint iridescentPaint = null;
     private Paint combinationPaint = null;
     //endregion
+
     //region CONSTRUCTORS
     public IridescentView(Context context) {
         super(context, null);
@@ -136,24 +131,19 @@ public class IridescentView extends ImageView implements SensorEventListener {
 
     private void setupBitmaps(){
         this.original = ((BitmapDrawable)this.getDrawable()).getBitmap();
-        this.mask = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
-        this.brightness = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
-        this.result = Bitmap.createBitmap(mask.getWidth(), mask.getHeight(), Bitmap.Config.ARGB_8888);
+        this.iridescentOverlay = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
+        this.result = Bitmap.createBitmap(original.getWidth(), original.getHeight(), Bitmap.Config.ARGB_8888);
     }
 
     private void setupCanvas(){
-        this.maskCanvas = new Canvas(this.mask);
-        this.brightnessCanvas = new Canvas(this.brightness);
+        this.iridescentCanvas = new Canvas(this.iridescentOverlay);
         this.resultCanvas = new Canvas(this.result);
     }
 
     private void setupPaints(){
-        this.maskPaint = new Paint();
-        this.maskPaint.setAntiAlias(true);
-        this.maskPaint.setStyle(Paint.Style.FILL);
-        this.brightnessPaint = new Paint();
-        this.brightnessPaint.setAntiAlias(true);
-        this.brightnessPaint.setStyle(Paint.Style.FILL);
+        this.iridescentPaint = new Paint();
+        this.iridescentPaint.setAntiAlias(true);
+        this.iridescentPaint.setStyle(Paint.Style.FILL);
         this.combinationPaint = new Paint();
         this.combinationPaint.setAntiAlias(true);
         this.combinationPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
@@ -191,7 +181,7 @@ public class IridescentView extends ImageView implements SensorEventListener {
 
         // This avoids over-sensitivity of the accelerometer.
         if ((abs(this.lastRoll - roll) > ANGLE_SENSITIVITY) &&
-           (abs(this.lastPitch - pitch) > ANGLE_SENSITIVITY)) {
+                (abs(this.lastPitch - pitch) > ANGLE_SENSITIVITY)) {
             this.lastRoll = roll;
             this.lastPitch = pitch;
             setIridescentEffect(roll, pitch);
@@ -199,45 +189,42 @@ public class IridescentView extends ImageView implements SensorEventListener {
     }
     //region DRAWING
     private void eraseBitmaps(){
-        this.mask.eraseColor(Color.TRANSPARENT);
-        this.brightness.eraseColor(Color.TRANSPARENT);
+        this.iridescentOverlay.eraseColor(Color.TRANSPARENT);
         this.result.eraseColor(Color.TRANSPARENT);
     }
 
     private void eraseCanvas(){
-        this.maskCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
-        this.brightnessCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
+        this.iridescentCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
         this.resultCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.MULTIPLY);
     }
 
     private void setIridescentEffect(double roll, double pitch){
         //region CALCULATIONS
-        float w = this.mask.getWidth();
-        float h = this.mask.getHeight();
-        float n = IRIDESCENT_COLORS.length;
-        float c = 2f; // Number of colors visible in the gradient.
-        float gradientW = (w * n) / c;
-        float offsetW = (float) (((n - c) / 2) * gradientW * sin(roll) * ANGLE_SPEED);
-        float startY = h / 2;
-        float endY = (float) (4 * h * (1 + sin(pitch - (Math.PI / 2))));
+        float w = this.iridescentOverlay.getWidth();
+        float h = this.iridescentOverlay.getHeight();
+
+        double gw = hypot(w,h) * IRIDESCENT_COLORS.length / NUMBER_OF_VISIBLE_COLORS;
+        double pcos = cos(pitch);
+        double psin = sin(pitch);
+        double ow = ((gw / 2) * cos(roll));
+        double cy = this.getTop() + (h/2);
+
+        float x0 = (float) (     ow * pcos + cy * psin);
+        float y0 = (float) (  (-ow) * psin + cy * pcos);
+        float x1 = (float) ((gw+ow) * pcos + cy * psin);
+        float y1 = (float) ((-gw-ow)* psin + cy * pcos);
         //endregion
         // Clears all bitmaps and canvas.
         eraseBitmaps();
         eraseCanvas();
         //region IRIDESCENT GRADIENT
-        Shader maskGradient = new LinearGradient(offsetW, startY, (gradientW + offsetW), endY, IRIDESCENT_COLORS, null, Shader.TileMode.MIRROR);
-        this.maskPaint.setShader(maskGradient);
-        this.maskCanvas.drawPaint(maskPaint);
-        //endregion
-        //region BRIGHTNESS GRADIENT
-        Shader brightnessGradient = new LinearGradient(offsetW, startY, (gradientW + offsetW), endY, BRIGHTNESS_COLORS, null, Shader.TileMode.MIRROR);
-        this.brightnessPaint.setShader(brightnessGradient);
-        this.brightnessCanvas.drawPaint(brightnessPaint);
+        Shader maskGradient = new LinearGradient(x0, y0, x1, y1, IRIDESCENT_COLORS, null, Shader.TileMode.REPEAT);
+        this.iridescentPaint.setShader(maskGradient);
+        this.iridescentCanvas.drawPaint(iridescentPaint);
         //endregion
         //region FINAL IMAGE
         this.resultCanvas.drawBitmap(original, 0, 0, null);
-        this.resultCanvas.drawBitmap(mask, 0, 0, combinationPaint);
-        this.resultCanvas.drawBitmap(brightness, 0, 0, combinationPaint);
+        this.resultCanvas.drawBitmap(iridescentOverlay, 0, 0, combinationPaint);
         this.setImageBitmap(this.result);
         //endregion
     }
