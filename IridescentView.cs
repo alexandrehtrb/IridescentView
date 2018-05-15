@@ -1,4 +1,5 @@
 using System;
+using static System.Math;
 
 using Android.Hardware;
 using Android.Views;
@@ -14,15 +15,6 @@ using Android.Graphics.Drawables;
 // E-mail: alexandrehtrb@outlook.com
 // Este projeto é uma View customizada que cria um efeito iridescente por cima de imagens.
 // This project is a custom view for Xamarin.Android that creates an iridescent effect on top of images.
-
-
-
-
-// ***** Needs updates, see .java class for newest version. *****
-
-
-
-
 
 // This project is under the MIT license:
 
@@ -51,8 +43,7 @@ using Android.Graphics.Drawables;
 namespace Br.AlexandreHTRB
 {
     public class IridescentView : ImageView, ISensorEventListener
-    {
-		
+    {		
 		private static readonly int[] IRIDESCENT_COLORS = new int[] {
             Color.ParseColor("#77FF0000"),
             Color.ParseColor("#77FFFF00"),
@@ -63,45 +54,46 @@ namespace Br.AlexandreHTRB
             Color.ParseColor("#77FF0000")
 		};
 
-		private static readonly int[] BRIGHTNESS_COLORS = new int[] {
-				Color.ParseColor("#00FFFFFF"),
-				Color.ParseColor("#33FFFFFF")
-		};
+        private static readonly double ANGLE_SENSITIVITY = 0.03d * (Math.PI / 180d);
+        private static readonly double NUMBER_OF_VISIBLE_COLORS = 2d;
 
-		private static readonly double ANGLE_SENSITIVITY = 0.03d * (Math.PI / 180d);
-		private static readonly double ANGLE_SPEED = 0.25d;
-		
-		private double lastRoll = 0d;
-		private double lastPitch = 0;
-		
-		private Context context;
-		private SensorManager sensorManager;
-		private Sensor accelerometer;
-		
-		private Bitmap original;
-		private Bitmap mask;
-		private Bitmap brightness;
-		private Bitmap result;
-		
-		private Canvas maskCanvas = null;
-		private Canvas brightnessCanvas = null;
-		private Canvas resultCanvas = null;
-		
-		private Paint maskPaint = null;
-		private Paint brightnessPaint = null;
-		private Paint combinationPaint = null;
+        #region CONTEXT
+        private Context context;
+        #endregion
+        #region SENSOR
+        private SensorManager sensorManager;
+        private Sensor accelerometer;
+        private double lastRoll = 0d;
+        private double lastPitch = 0;
+        #endregion
+        #region BITMAPS
+        private Bitmap original;
+        private Bitmap iridescentOverlay;
+        private Bitmap result;
+        #endregion
+        #region CANVAS
+        private Canvas iridescentCanvas = null;
+        private Canvas resultCanvas = null;
+        #endregion
+        #region PAINTS
+        private Paint iridescentPaint = null;
+        private Paint combinationPaint = null;
+        #endregion
 
         public IridescentView(Context context) : this(context, null) { }
 
         public IridescentView(Context context, IAttributeSet attrs) : this(context, attrs, 0) { }
 
-        public IridescentView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
-        {
+        public IridescentView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr) {
+            Init(context);
+        }
+
+        private void Init(Context context){
             SetupContext(context);
-			SetupSensor();
-			SetupBitmaps();
-			SetupCanvas();
-			SetupPaints();
+            SetupSensor();
+            SetupBitmaps();
+            SetupCanvas();
+            SetupPaints();
         }
 		
 		private void SetupContext(Context context){
@@ -110,53 +102,44 @@ namespace Br.AlexandreHTRB
 		
 		private void SetupSensor(){
 			this.sensorManager = (SensorManager)(this.context.GetSystemService(Context.SensorService));
-            this.accelerometer = this.sensorManager.GetDefaultSensor(SensorType.Accelerometer);
-		}
+            this.accelerometer = this.sensorManager.GetDefaultSensor(SensorType.Accelerometer);            
+            this.sensorManager.RegisterListener(this, accelerometer, SensorDelay.Normal);
+        }
 		
 		private void SetupBitmaps(){
 			this.original = ((BitmapDrawable)this.Drawable).Bitmap;
-            this.mask = Bitmap.CreateBitmap(original.Width, original.Height, Bitmap.Config.Argb8888);
-            this.brightness = Bitmap.CreateBitmap(original.Width, original.Height, Bitmap.Config.Argb8888);
-            this.result = Bitmap.CreateBitmap(mask.Width, mask.Height, Bitmap.Config.Argb8888);
-		}
+            this.iridescentOverlay = Bitmap.CreateBitmap(original.Width, original.Height, Bitmap.Config.Argb8888);
+            this.result = Bitmap.CreateBitmap(original.Width, original.Height, Bitmap.Config.Argb8888);
+        }
 		
 		private void SetupCanvas(){
-			this.maskCanvas = new Canvas(this.mask);
-            this.brightnessCanvas = new Canvas(this.brightness);
+            this.iridescentCanvas = new Canvas(this.iridescentOverlay);
             this.resultCanvas = new Canvas(this.result);
-		}
+        }
 		
 		private void SetupPaints(){
-			this.maskPaint = new Paint();
-            this.maskPaint.AntiAlias = true;
-            this.maskPaint.SetStyle(Paint.Style.Fill);
-            this.brightnessPaint = new Paint();
-            this.brightnessPaint.AntiAlias = true;
-            this.brightnessPaint.SetStyle(Paint.Style.Fill);
+			this.iridescentPaint = new Paint();
+            this.iridescentPaint.AntiAlias = true;
+            this.iridescentPaint.SetStyle(Paint.Style.Fill);
             this.combinationPaint = new Paint();
             this.combinationPaint.AntiAlias = true;
             this.combinationPaint.SetXfermode(new PorterDuffXfermode(PorterDuff.Mode.SrcAtop));
-		}
+        }
 
-		public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
-        {
+		public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy){
         }
 		
-        protected override void OnVisibilityChanged(View view, ViewStates visibility)
-        {
+        protected override void OnVisibilityChanged(View view, ViewStates visibility){
             base.OnVisibilityChanged(view, visibility);
-            if (visibility == ViewStates.Visible)
-            {
+            if (visibility == ViewStates.Visible){
                 this.sensorManager.RegisterListener(this, this.accelerometer, SensorDelay.Normal);
             }
-            else if ((visibility == ViewStates.Invisible) || (visibility == ViewStates.Gone))
-            {
+            else if ((visibility == ViewStates.Invisible) || (visibility == ViewStates.Gone)){
                 this.sensorManager.UnregisterListener(this, this.accelerometer);
             }
         }
 
-        public void OnSensorChanged(SensorEvent e)
-        {
+        public void OnSensorChanged(SensorEvent e){
             double[] g = new double[3];
             g[0] = e.Values[0];
             g[1] = e.Values[1];
@@ -187,44 +170,49 @@ namespace Br.AlexandreHTRB
         }
 		
         private void EraseBitmaps(){
-			this.mask.EraseColor(Color.Transparent);
-            this.brightness.EraseColor(Color.Transparent);
+			this.iridescentOverlay.EraseColor(Color.Transparent);
             this.result.EraseColor(Color.Transparent);
 		}
 
 		private void EraseCanvas(){
-			this.maskCanvas.DrawColor(Color.Transparent, PorterDuff.Mode.Multiply);
-            this.brightnessCanvas.DrawColor(Color.Transparent, PorterDuff.Mode.Multiply);
+			this.iridescentCanvas.DrawColor(Color.Transparent, PorterDuff.Mode.Multiply);
             this.resultCanvas.DrawColor(Color.Transparent, PorterDuff.Mode.Multiply);
 		}
+
+        private double Hypot(double a, double b){
+            return Sqrt(Pow(a, 2) + Pow(b, 2));
+        }
 		
 		private void SetIridescentEffect(double roll, double pitch){
-			float w = this.mask.Width;
-            float h = this.mask.Height;
-			float n = IRIDESCENT_COLORS.length;
-			float c = 2f; // Number of colors visible in the gradient.
-			float gradientW = (w * n) / c;
-			float offsetW = (float) (((n - c) / 2) * gradientW * Math.Sin(roll) * ANGLE_SPEED);
-			float startY = h / 2;
-			float endY = (float) (4 * h * (1 + Math.Sin(pitch - (Math.PI / 2))));
-			
-			// Clears all bitmaps and canvas.
-			EraseBitmaps();
-			EraseCanvas();
-			
-			Shader maskGradient = new LinearGradient(offsetW, startY, (gradientW + offsetW), endY, colors, null, Shader.TileMode.Mirror);
-            this.maskPaint.SetShader(maskGradient);
-            this.maskCanvas.DrawPaint(maskPaint);
+            //region CALCULATIONS
+            float w = this.iridescentOverlay.Width;
+            float h = this.iridescentOverlay.Height;
+            
 
-            Shader brightnessGradient = new LinearGradient(offsetW, startY, (gradientW + offsetW), endY, BrightnessColors, null, Shader.TileMode.Mirror);
-            this.brightnessPaint.SetShader(brightnessGradient);
-            this.brightnessCanvas.DrawPaint(brightnessPaint);
+            double gw = Hypot(w, h) * IRIDESCENT_COLORS.Length / NUMBER_OF_VISIBLE_COLORS;
+            double pcos = Cos(pitch);
+            double psin = Sin(pitch);
+            double ow = ((gw / 2) * Cos(roll));
+            double cy = this.Top + (h / 2);
 
+            float x0 = (float)(ow * pcos + cy * psin);
+            float y0 = (float)((-ow) * psin + cy * pcos);
+            float x1 = (float)((gw + ow) * pcos + cy * psin);
+            float y1 = (float)((-gw - ow) * psin + cy * pcos);
+            //endregion
+            // Clears all bitmaps and canvas.
+            EraseBitmaps();
+            EraseCanvas();
+            //region IRIDESCENT GRADIENT
+            Shader maskGradient = new LinearGradient(x0, y0, x1, y1, IRIDESCENT_COLORS, null, Shader.TileMode.Repeat);
+            this.iridescentPaint.SetShader(maskGradient);
+            this.iridescentCanvas.DrawPaint(iridescentPaint);
+            //endregion
+            //region FINAL IMAGE
             this.resultCanvas.DrawBitmap(original, 0, 0, null);
-            this.resultCanvas.DrawBitmap(mask, 0, 0, combinationPaint);
-            this.resultCanvas.DrawBitmap(brightness, 0, 0, combinationPaint);
-            this.SetImageBitmap(result);
-		}
-
+            this.resultCanvas.DrawBitmap(iridescentOverlay, 0, 0, combinationPaint);
+            this.SetImageBitmap(this.result);
+            //endregion
+        }
     }
 }
