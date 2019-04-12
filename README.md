@@ -1,5 +1,5 @@
 # IridescentView
-A custom View for Android Java / Xamarin.Android that creates an iridescent effect on top of images.
+Uma View customizada para Android Java / Xamarin.Android que cria um efeito iridescente no topo de imagens.
 
 [Read in english](https://github.com/alexandrehtrb/IridescentView/blob/master/README.en.md)
 
@@ -7,11 +7,11 @@ A custom View for Android Java / Xamarin.Android that creates an iridescent effe
 
 ![IridescentGlobe](https://github.com/alexandrehtrb/IridescentView/blob/master/iridescent_globe.jpg)
 
-The IridescentView is a custom ImageView that applies an iridescent effect on top of images, according to the device rotation by the user. The rotation is acquired by the device's accelerometer and used for effect calculations.
+A IridescentView é uma ImageView customizada que aplica um efeito iridescente no topo de imagens, de acordo com a rotação do dispositivo pelo usuário. A rotação é lida pelo acelerômetro e usada para o cálculo do efeito.
 
-The minimum API is API 9 (Android 2.3 Gingerbread).
+A API mínima do Android é a API 9 (Android 2.3 Gingerbread).
 
-How to use:
+Como usar:
 
 ```
 <br.alexandrehtrb.IridescentView
@@ -22,4 +22,4 @@ How to use:
         android:src="@drawable/black_star"/>
  ```
 
-The .java file is the class for Android Java and the .cs file is the class for Xamarin.Android.
+O arquivo .java é a classe para Android Java e o arquivo .cs é a classes para Xamarin.Android.
