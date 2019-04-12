@@ -1,6 +1,8 @@
 # IridescentView
 A custom View for Android Java / Xamarin.Android that creates an iridescent effect on top of images.
 
+[Read in english](https://github.com/alexandrehtrb/IridescentView/blob/master/README.en.md)
+
 ![IridescentStar](https://github.com/alexandrehtrb/IridescentView/blob/master/iridescent_star.gif)
 
 ![IridescentGlobe](https://github.com/alexandrehtrb/IridescentView/blob/master/iridescent_globe.jpg)
