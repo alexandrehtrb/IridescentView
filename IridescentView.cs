@@ -43,8 +43,8 @@ using Android.Graphics.Drawables;
 namespace Br.AlexandreHTRB
 {
     public class IridescentView : ImageView, ISensorEventListener
-    {		
-		private static readonly int[] IRIDESCENT_COLORS = new int[] {
+    {
+        private static readonly int[] IRIDESCENT_COLORS = new int[] {
             Color.ParseColor("#77FF0000"),
             Color.ParseColor("#77FFFF00"),
             Color.ParseColor("#7700FF00"),
@@ -52,73 +52,65 @@ namespace Br.AlexandreHTRB
             Color.ParseColor("#770000FF"),
             Color.ParseColor("#77FF00FF"),
             Color.ParseColor("#77FF0000")
-		};
+        };
 
         private static readonly double ANGLE_SENSITIVITY = 0.03d * (Math.PI / 180d);
         private static readonly double NUMBER_OF_VISIBLE_COLORS = 2d;
 
-        #region CONTEXT
         private Context context;
-        #endregion
-        #region SENSOR
         private SensorManager sensorManager;
         private Sensor accelerometer;
         private double lastRoll = 0d;
         private double lastPitch = 0;
-        #endregion
-        #region BITMAPS
         private Bitmap original;
         private Bitmap iridescentOverlay;
         private Bitmap result;
-        #endregion
-        #region CANVAS
         private Canvas iridescentCanvas = null;
         private Canvas resultCanvas = null;
-        #endregion
-        #region PAINTS
         private Paint iridescentPaint = null;
         private Paint combinationPaint = null;
-        #endregion
 
         public IridescentView(Context context) : this(context, null) { }
 
         public IridescentView(Context context, IAttributeSet attrs) : this(context, attrs, 0) { }
 
-        public IridescentView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr) {
+        public IridescentView(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
+        {
             Init(context);
         }
 
-        private void Init(Context context){
-            SetupContext(context);
+        private void Init(Context context)
+        {
+            this.context = context;
             SetupSensor();
             SetupBitmaps();
             SetupCanvas();
             SetupPaints();
         }
-		
-		private void SetupContext(Context context){
-			this.context = context;
-		}
-		
-		private void SetupSensor(){
-			this.sensorManager = (SensorManager)(this.context.GetSystemService(Context.SensorService));
-            this.accelerometer = this.sensorManager.GetDefaultSensor(SensorType.Accelerometer);            
+
+        private void SetupSensor()
+        {
+            this.sensorManager = (SensorManager)(this.context.GetSystemService(Context.SensorService));
+            this.accelerometer = this.sensorManager.GetDefaultSensor(SensorType.Accelerometer);
             this.sensorManager.RegisterListener(this, accelerometer, SensorDelay.Normal);
         }
-		
-		private void SetupBitmaps(){
-			this.original = ((BitmapDrawable)this.Drawable).Bitmap;
+
+        private void SetupBitmaps()
+        {
+            this.original = ((BitmapDrawable)this.Drawable).Bitmap;
             this.iridescentOverlay = Bitmap.CreateBitmap(original.Width, original.Height, Bitmap.Config.Argb8888);
             this.result = Bitmap.CreateBitmap(original.Width, original.Height, Bitmap.Config.Argb8888);
         }
-		
-		private void SetupCanvas(){
+
+        private void SetupCanvas()
+        {
             this.iridescentCanvas = new Canvas(this.iridescentOverlay);
             this.resultCanvas = new Canvas(this.result);
         }
-		
-		private void SetupPaints(){
-			this.iridescentPaint = new Paint();
+
+        private void SetupPaints()
+        {
+            this.iridescentPaint = new Paint();
             this.iridescentPaint.AntiAlias = true;
             this.iridescentPaint.SetStyle(Paint.Style.Fill);
             this.combinationPaint = new Paint();
@@ -126,20 +118,25 @@ namespace Br.AlexandreHTRB
             this.combinationPaint.SetXfermode(new PorterDuffXfermode(PorterDuff.Mode.SrcAtop));
         }
 
-		public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy){
+        public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
+        {
         }
-		
-        protected override void OnVisibilityChanged(View view, ViewStates visibility){
+
+        protected override void OnVisibilityChanged(View view, ViewStates visibility)
+        {
             base.OnVisibilityChanged(view, visibility);
-            if (visibility == ViewStates.Visible){
+            if (visibility == ViewStates.Visible)
+            {
                 this.sensorManager.RegisterListener(this, this.accelerometer, SensorDelay.Normal);
             }
-            else if ((visibility == ViewStates.Invisible) || (visibility == ViewStates.Gone)){
+            else if ((visibility == ViewStates.Invisible) || (visibility == ViewStates.Gone))
+            {
                 this.sensorManager.UnregisterListener(this, this.accelerometer);
             }
         }
 
-        public void OnSensorChanged(SensorEvent e){
+        public void OnSensorChanged(SensorEvent e)
+        {
             double[] g = new double[3];
             g[0] = e.Values[0];
             g[1] = e.Values[1];
@@ -159,35 +156,35 @@ namespace Br.AlexandreHTRB
             // 90° when the device's screen normal vector is perpendicular to the surface's normal vector.
             // Range from 180° to -180º.
             double pitch = Math.Atan2(g[1], g[2]);
-			
-			// This avoids over-sensitivity of the accelerometer.
-			if ((Math.Abs(this.lastRoll - roll) > ANGLE_SENSITIVITY) &&
-			   (Math.Abs(this.lastPitch - pitch) > ANGLE_SENSITIVITY)) {
-				this.lastRoll = roll;
-				this.lastPitch = pitch;
-				SetIridescentEffect(roll, pitch);
-			}
+
+            // This avoids over-sensitivity of the accelerometer.
+            if ((Math.Abs(this.lastRoll - roll) > ANGLE_SENSITIVITY) &&
+               (Math.Abs(this.lastPitch - pitch) > ANGLE_SENSITIVITY))
+            {
+                this.lastRoll = roll;
+                this.lastPitch = pitch;
+                SetIridescentEffect(roll, pitch);
+            }
         }
-		
-        private void EraseBitmaps(){
-			this.iridescentOverlay.EraseColor(Color.Transparent);
+
+        private void EraseBitmaps()
+        {
+            this.iridescentOverlay.EraseColor(Color.Transparent);
             this.result.EraseColor(Color.Transparent);
-		}
-
-		private void EraseCanvas(){
-			this.iridescentCanvas.DrawColor(Color.Transparent, PorterDuff.Mode.Multiply);
-            this.resultCanvas.DrawColor(Color.Transparent, PorterDuff.Mode.Multiply);
-		}
-
-        private double Hypot(double a, double b){
-            return Sqrt(Pow(a, 2) + Pow(b, 2));
         }
-		
-		private void SetIridescentEffect(double roll, double pitch){
-            //region CALCULATIONS
+
+        private void EraseCanvas()
+        {
+            this.iridescentCanvas.DrawColor(Color.Transparent, PorterDuff.Mode.Multiply);
+            this.resultCanvas.DrawColor(Color.Transparent, PorterDuff.Mode.Multiply);
+        }
+
+        private double Hypot(double a, double b) => Sqrt(Pow(a, 2) + Pow(b, 2));
+
+        private void SetIridescentEffect(double roll, double pitch)
+        {
             float w = this.iridescentOverlay.Width;
             float h = this.iridescentOverlay.Height;
-            
 
             double gw = Hypot(w, h) * IRIDESCENT_COLORS.Length / NUMBER_OF_VISIBLE_COLORS;
             double pcos = Cos(pitch);
@@ -199,20 +196,18 @@ namespace Br.AlexandreHTRB
             float y0 = (float)((-ow) * psin + cy * pcos);
             float x1 = (float)((gw + ow) * pcos + cy * psin);
             float y1 = (float)((-gw - ow) * psin + cy * pcos);
-            //endregion
+            
             // Clears all bitmaps and canvas.
             EraseBitmaps();
             EraseCanvas();
-            //region IRIDESCENT GRADIENT
+            
             Shader maskGradient = new LinearGradient(x0, y0, x1, y1, IRIDESCENT_COLORS, null, Shader.TileMode.Repeat);
             this.iridescentPaint.SetShader(maskGradient);
             this.iridescentCanvas.DrawPaint(iridescentPaint);
-            //endregion
-            //region FINAL IMAGE
+            
             this.resultCanvas.DrawBitmap(original, 0, 0, null);
             this.resultCanvas.DrawBitmap(iridescentOverlay, 0, 0, combinationPaint);
             this.SetImageBitmap(this.result);
-            //endregion
         }
     }
 }
