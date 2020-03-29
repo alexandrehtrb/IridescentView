@@ -22,4 +22,4 @@ Como usar:
         android:src="@drawable/black_star"/>
  ```
 
-O arquivo .java é a classe para Android Java e o arquivo .cs é a classes para Xamarin.Android.
+O arquivo .java é a classe para Android Java e o arquivo .cs é a classe para Xamarin.Android.
