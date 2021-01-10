@@ -1,14 +1,13 @@
-using System;
-using static System.Math;
-
-using Android.Hardware;
-using Android.Views;
-using Android.Widget;
 using Android.Content;
-using Android.Util;
-using Android.Runtime;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Hardware;
+using Android.Runtime;
+using Android.Util;
+using Android.Views;
+using Android.Widget;
+using System;
+using static System.Math;
 
 // Criado por Alexandre H.T.R. Bonfitto em 10/05/2017.
 // GitHub: https://github.com/alexandrehtrb/
@@ -40,7 +39,7 @@ using Android.Graphics.Drawables;
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Br.AlexandreHTRB
+namespace Br.AlexandreHTRB.IridescentView
 {
     public class IridescentView : ImageView, ISensorEventListener
     {
@@ -53,39 +52,39 @@ namespace Br.AlexandreHTRB
             Color.ParseColor("#BBFF00FF"), //pink
             Color.ParseColor("#BBFF0000") //red
         };
-		private static readonly float iridescentNumberOfVisibleColors = 3d;
+        private static readonly float iridescentNumberOfVisibleColors = 3f;
 
         private static readonly double angleSensitivity = 0.03d * (Math.PI / 180d);
 
-		#region CONTEXT
+        #region CONTEXT
         private Context context;
-		#endregion
-		#region SENSOR
+        #endregion
+        #region SENSOR
         private SensorManager sensorManager;
         private Sensor accelerometer;
-        private float lastRoll = 0d;
-        private float lastPitch = 0;
-		#endregion
-		#region BITMAPS
+        private float lastRoll = 0f;
+        private float lastPitch = 0f;
+        #endregion
+        #region BITMAPS
         private Bitmap original;
         private Bitmap iridescentOverlay;
         private Bitmap result;
-		#endregion
-		#region CANVAS
+        #endregion
+        #region CANVAS
         private Canvas iridescentCanvas = null;
         private Canvas resultCanvas = null;
-		#endregion
-		#region PAINTS
+        #endregion
+        #region PAINTS
         private Paint iridescentPaint = null;
         private Paint combinationPaint = null;
-		#endregion
-		#region DIMENSIONS
-		private float gw; // gradient width
-		private float cx; // center X
-		private float cy; // center Y
-		#endregion
+        #endregion
+        #region DIMENSIONS
+        private float gw; //gradient width
+        private float cx; //center X
+        private float cy; //center Y
+        #endregion
 
-		#region CONSTRUCTORS
+        #region CONSTRUCTORS
         public IridescentView(Context context) : this(context, null) { }
 
         public IridescentView(Context context, IAttributeSet attrs) : this(context, attrs, 0) { }
@@ -94,9 +93,9 @@ namespace Br.AlexandreHTRB
         {
             Init(context);
         }
-		#endregion
+        #endregion
 
-		#region SETUPS
+        #region SETUPS
         private void Init(Context context)
         {
             this.context = context;
@@ -104,6 +103,7 @@ namespace Br.AlexandreHTRB
             SetupBitmaps();
             SetupCanvas();
             SetupPaints();
+            SetupBaseDimensions();
         }
 
         private void SetupSensor()
@@ -135,23 +135,25 @@ namespace Br.AlexandreHTRB
             this.combinationPaint.AntiAlias = true;
             this.combinationPaint.SetXfermode(new PorterDuffXfermode(PorterDuff.Mode.SrcAtop));
         }
-		
-		private void SetupBaseDimensions(){
-			var w = (float) this.iridescentOverlay.Width;
-			var h = (float) this.iridescentOverlay.Height;
-			this.gw = (float) (Hypot(w, h) * iridescentColors.length / iridescentNumberOfVisibleColors);
-			this.cx = this.PivotX;
-			this.cy = this.PivotY;
-		}
-		#endregion
+
+        private void SetupBaseDimensions()
+        {
+            var w = (float)this.iridescentOverlay.Width;
+            var h = (float)this.iridescentOverlay.Height;
+            this.gw = (Hypot(w, h) * iridescentColors.Length / iridescentNumberOfVisibleColors);
+            this.cx = this.PivotX;
+            this.cy = this.PivotY;
+        }
+        #endregion
 
         public void OnAccuracyChanged(Sensor sensor, [GeneratedEnum] SensorStatus accuracy)
         {
+            // No implementation necessary
         }
 
-        protected override void OnVisibilityChanged(View view, ViewStates visibility)
+        protected override void OnVisibilityChanged(View changedView, ViewStates visibility)
         {
-            base.OnVisibilityChanged(view, visibility);
+            base.OnVisibilityChanged(changedView, visibility);
             if (visibility == ViewStates.Visible)
             {
                 this.sensorManager.RegisterListener(this, this.accelerometer, SensorDelay.Normal);
@@ -164,23 +166,23 @@ namespace Br.AlexandreHTRB
 
         public void OnSensorChanged(SensorEvent e)
         {
-            var gNorm = (float) Math.Sqrt(Math.Pow(e.Values[0], 2) + Math.Pow(e.Values[1], 2) + Math.Pow(e.Values[2], 2));
+            var gNorm = (float)Sqrt(Pow(e.Values[0], 2) + Pow(e.Values[1], 2) + Pow(e.Values[2], 2));
             // Normalize the accelerometer vector.
             float g0 = e.Values[0] / gNorm;
             float g1 = e.Values[1] / gNorm;
             float g2 = e.Values[2] / gNorm;
 
             // Roll is the Z-Rot. Counter-clockwise (+) and clockwise (-), moving the device like a steering wheel.
-			// 0° when the screen is perpendicular to the floor, -90º when the screen is fully tilted to the right, 90º when the screen is fully tilted to the left.
-			// Range from 180° to -180°.
-            var roll = (float) Math.Atan2(g0, g1);
+            // 0° when the screen is perpendicular to the floor, -90º when the screen is fully tilted to the right, 90º when the screen is fully tilted to the left.
+            // Range from 180° to -180°.
+            var roll = (float)Atan2(g0, g1);
             // Pitch is the X-Rot. Forward (+) and backwards (-).
-			// 0º when the screen is facing the ceiling, 180º when the screen is facing the floor, 90º when the screen is facing the person.
-            var pitch = (float) Math.Atan2(g1, g2);
+            // 0º when the screen is facing the ceiling, 180º when the screen is facing the floor, 90º when the screen is facing the person.
+            var pitch = (float)Atan2(g1, g2);
 
             // This avoids over-sensitivity of the accelerometer.
-            if ((Math.Abs(this.lastRoll - roll) > angleSensitivity) &&
-                (Math.Abs(this.lastPitch - pitch) > angleSensitivity))
+            if ((Abs(this.lastRoll - roll) > angleSensitivity) &&
+                (Abs(this.lastPitch - pitch) > angleSensitivity))
             {
                 this.lastRoll = roll;
                 this.lastPitch = pitch;
@@ -200,21 +202,21 @@ namespace Br.AlexandreHTRB
             this.resultCanvas.DrawColor(Color.Transparent, PorterDuff.Mode.Multiply);
         }
 
-        private float Hypot(float a, float b) => (float) Sqrt(Pow(a, 2) + Pow(b, 2));
+        private float Hypot(float a, float b) => (float)Sqrt(Pow(a, 2) + Pow(b, 2));
 
         private void SetIridescentEffect(float roll, float pitch)
         {
-            //region CALCULATIONS
-			var pcos = (float) cos(pitch);
-			var rcos = (float) cos(roll);
-			var rsin = (float) sin(roll);
+            #region CALCULATIONS
+            var pcos = (float)Cos(pitch);
+            var rcos = (float)Cos(roll);
+            var rsin = (float)Sin(roll);
 
-			var x0 = this.cx - (gw * pcos * rsin);
-			var y0 = this.cy + (gw * pcos * rcos);
-			var x1 = x0 - (gw * rsin);
-			var y1 = y0 + (gw * rcos);
-			//endregion
-            
+            var x0 = this.cx - (gw * pcos * rsin);
+            var y0 = this.cy + (gw * pcos * rcos);
+            var x1 = x0 - (gw * rsin);
+            var y1 = y0 + (gw * rcos);
+            #endregion
+
             // Clears all bitmaps and canvas.
             EraseBitmaps();
             EraseCanvas();
@@ -223,11 +225,11 @@ namespace Br.AlexandreHTRB
             this.iridescentPaint.SetShader(maskGradient);
             this.iridescentCanvas.DrawPaint(iridescentPaint);
             #endregion
-			#region FINAL IMAGE
+            #region FINAL IMAGE
             this.resultCanvas.DrawBitmap(original, 0, 0, null);
             this.resultCanvas.DrawBitmap(iridescentOverlay, 0, 0, combinationPaint);
             this.SetImageBitmap(this.result);
-			#endregion
+            #endregion
         }
     }
 }
