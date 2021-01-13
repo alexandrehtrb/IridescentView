@@ -9,7 +9,7 @@ Uma View customizada para Android Java / Xamarin.Android que cria um efeito irid
 
 A IridescentView é uma ImageView customizada que aplica um efeito iridescente no topo de imagens, de acordo com a rotação do dispositivo pelo usuário. A rotação é lida pelo acelerômetro e usada para o cálculo do efeito.
 
-A API mínima do Android é a API 9 (Android 2.3 Gingerbread).
+A API mínima do Android é a API 11 (Android 3.0 Honeycomb).
 
 Como usar:
 

@@ -9,6 +9,7 @@ buildscript {
     dependencies {
         classpath(Plugins.androidBuildTools)
         classpath(Plugins.kotlinGradlePlugin)
+        classpath(Plugins.jcenterBintrayPlugin)
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -18,7 +19,8 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url = uri("https://jitpack.io") }
+        //mavenLocal()
+        //maven("https://dl.bintray.com/alexandrehtrb/Maven")
     }
 }
 

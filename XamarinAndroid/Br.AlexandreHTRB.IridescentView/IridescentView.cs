@@ -12,8 +12,8 @@ using static System.Math;
 // Criado por Alexandre H.T.R. Bonfitto em 10/05/2017.
 // GitHub: https://github.com/alexandrehtrb/
 // E-mail: alexandrehtrb@outlook.com
-// Este projeto é uma ImageView customizada que cria um efeito iridescente por cima de imagens.
-// This project is a custom ImageView that creates an iridescent effect on top of images.
+// Este projeto é uma ImageView do Android customizada que cria um efeito iridescente por cima de imagens.
+// This project is a custom Android ImageView that creates an iridescent effect on top of images.
 
 // This project is under the MIT license:
 
