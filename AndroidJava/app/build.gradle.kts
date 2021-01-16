@@ -31,8 +31,8 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
-    //implementation(project(":iridescentview"))
+    implementation(project(":iridescentview"))
 
     implementation(Dependencies.androidXAppCompat)
-    implementation(Dependencies.iridescentView)
+    //implementation(Dependencies.iridescentView)
 }
