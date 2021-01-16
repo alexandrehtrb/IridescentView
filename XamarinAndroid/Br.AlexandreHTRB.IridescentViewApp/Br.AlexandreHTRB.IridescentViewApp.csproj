@@ -10,8 +10,8 @@
     <TemplateGuid>{84dd83c5-0fe3-4294-9419-09e7c8ba324f}</TemplateGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Br.AlexandreHTRB.IridescentViewApp</RootNamespace>
-    <AssemblyName>Br.AlexandreHTRB.IridescentViewApp</AssemblyName>
+    <RootNamespace>Br.AlexandreHtrb.IridescentViewApp</RootNamespace>
+    <AssemblyName>Br.AlexandreHtrb.IridescentViewApp</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
@@ -104,9 +104,9 @@
     <AndroidResource Include="Resources\mipmap-xxxhdpi\ic_launcher_round.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Br.AlexandreHTRB.IridescentView\Br.AlexandreHTRB.IridescentView.csproj">
+    <ProjectReference Include="..\Br.AlexandreHtrb.IridescentView\Br.AlexandreHtrb.IridescentView.csproj">
       <Project>{78c67115-19be-47b1-8492-f09e887757a0}</Project>
-      <Name>Br.AlexandreHTRB.IridescentView</Name>
+      <Name>Br.AlexandreHtrb.IridescentView</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

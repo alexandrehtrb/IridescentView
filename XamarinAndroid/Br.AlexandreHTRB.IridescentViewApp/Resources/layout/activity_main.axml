@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <Br.AlexandreHTRB.IridescentView.IridescentView
+    <Br.AlexandreHtrb.IridescentView.IridescentView
         android:id="@+id/iridescent_star"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"

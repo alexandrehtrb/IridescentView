@@ -39,7 +39,7 @@ using static System.Math;
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-namespace Br.AlexandreHTRB.IridescentView
+namespace Br.AlexandreHtrb.IridescentView
 {
     public class IridescentView : ImageView, ISensorEventListener
     {

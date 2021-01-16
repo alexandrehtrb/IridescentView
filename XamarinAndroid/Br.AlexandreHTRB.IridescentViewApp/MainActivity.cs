@@ -2,7 +2,7 @@
 using Android.OS;
 using Android.Support.V7.App;
 
-namespace Br.AlexandreHTRB.IridescentViewApp
+namespace Br.AlexandreHtrb.IridescentViewApp
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
