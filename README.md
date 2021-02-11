@@ -1,18 +1,18 @@
 # IridescentView
 
-[Read in english](README.en.md)
+[Ler em português](README_pt.md)
 
 ![IridescentStar](iridescent_star.gif)
 
 ![IridescentGlobe](iridescent_globe.jpg)
 
-A IridescentView é uma ImageView customizada que aplica um efeito iridescente em imagens, de acordo com a rotação do dispositivo. A rotação é lida pelo acelerômetro e usada para o cálculo do efeito.
+The IridescentView is a custom ImageView that applies an iridescent effect on images, according to the device's rotation. The rotation is acquired by the accelerometer and used for the calculation of the effect.
 
-O componente está disponível para Android Java e Xamarin.Android.
+The component is available for Android Java and Xamarin.Android.
 
-## Para usar no Android Java
+## To use in Android Java
 
-Nos scripts Gradle, o repositório Maven do JCenter deve estar declarado:
+In the Gradle scripts,  the JCenter's Maven repository must be declared:
 
 ```kt
 allprojects {
@@ -24,13 +24,13 @@ allprojects {
 }
 ```
 
-No script Gradle do módulo no qual você quer usar a View, incluir a dependência no bloco `dependencies`:
+In the Gradle script of the module in which you want to use the View, include the dependency inside the `dependencies` block:
 
 ```kt
 implementation("br.alexandrehtrb.iridescentview:iridescentview:1.0.0")
 ```
 
-Para usar a View em um layout XML, adicionar como abaixo:
+To use the View in a XML layout, add like below:
 
 ```xml
 <br.alexandrehtrb.iridescentview.IridescentView
@@ -41,20 +41,20 @@ Para usar a View em um layout XML, adicionar como abaixo:
     android:src="@drawable/black_star"/>
  ```
 
-A API mínima do Android é a API 11 (Android 3.0 Honeycomb).
+The minimum Android API is API 11 (Android 3.0 Honeycomb).
 
-## Para usar no Xamarin.Android
+## To use in Xamarin.Android
 
-Para adicionar o componente no seu projeto, instalar o [pacote NuGet](https://www.nuget.org/packages/Br.AlexandreHtrb.IridescentView/):
+To add the component in yout project, install the [NuGet package](https://www.nuget.org/packages/Br.AlexandreHtrb.IridescentView/):
 
 ```
 Install-Package Br.AlexandreHtrb.IridescentView -Version 1.0.0
 ```
 
-Para usar a View em um layout AXML, adicionar como abaixo:
+To use the View in a AXML layout, add like below:
 
 ```xml
-<!-- O nome completo da classe é diferente no Xamarin.Android -->
+<!-- The complete name of the class is different in Xamarin.Android -->
 <Br.AlexandreHtrb.IridescentView.IridescentView
     android:id="@+id/iridescent_star"
     android:layout_height="wrap_content"
@@ -63,4 +63,4 @@ Para usar a View em um layout AXML, adicionar como abaixo:
     android:src="@drawable/black_star"/>
 ```
 
-A API mínima do Android é a API 28 (Android 9.0 Pie).
+The minimum Android API is API 28 (Android 9.0 Pie).
