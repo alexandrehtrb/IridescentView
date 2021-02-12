@@ -12,13 +12,14 @@ O componente está disponível para Android Java e Xamarin.Android.
 
 ## Para usar no Android Java
 
-Nos scripts Gradle, o repositório Maven do JCenter deve estar declarado:
+Nos scripts Gradle, o repositório Maven Central deve estar declarado:
 
 ```kt
 allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         // other Maven repositories
     }
 }
@@ -27,7 +28,7 @@ allprojects {
 No script Gradle do módulo no qual você quer usar a View, incluir a dependência no bloco `dependencies`:
 
 ```kt
-implementation("br.alexandrehtrb.iridescentview:iridescentview:1.0.0")
+implementation("io.github.alexandrehtrb:iridescentview:1.0.0")
 ```
 
 Para usar a View em um layout XML, adicionar como abaixo:

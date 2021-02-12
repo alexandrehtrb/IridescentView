@@ -6,7 +6,7 @@ object LibConfiguration {
     const val versionCode = 1
     const val versionName = "1.0.0"
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    const val groupId = "br.alexandrehtrb.iridescentview"
+    const val groupId = "io.github.alexandrehtrb"
     const val artifactId = "iridescentview"
     const val libraryName = "IridescentView"
     const val libraryDescription = "A custom Android ImageView that creates an iridescent effect on top of images."
@@ -16,6 +16,10 @@ object LibConfiguration {
     const val licenseUrl = "https://mit-license.org/"
     const val developerId = "alexandrehtrb"
     const val developerName = "Alexandre H.T.R. Bonfitto"
+    const val scmConnection = "scm:git:github.com/alexandrehtrb/IridescentView.git"
+    const val scmDeveloperConnection = "scm:git:github.com/alexandrehtrb/IridescentView.git"
+    const val scmUrl = "https://github.com/alexandrehtrb/IridescentView/tree/master"
+
     const val bintrayRepoName = "Maven"
 
     const val libraryLabel1 = "Iridescent"

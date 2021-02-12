@@ -18,6 +18,7 @@ buildscript {
 allprojects {
     repositories {
         google()
+        mavenCentral()
         jcenter()
         //mavenLocal()
         //maven("https://dl.bintray.com/alexandrehtrb/Maven")

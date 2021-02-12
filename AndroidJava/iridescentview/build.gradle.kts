@@ -5,7 +5,30 @@ plugins {
     id("com.android.library")
     id("com.jfrog.bintray")
     id("maven-publish")
+    id("signing")
 }
+
+//region Load properties from properties file or environment variables
+
+val secretPropsFile = project.rootProject.file("local.properties")
+if (secretPropsFile.exists()) {
+    println("Found secret props file, loading props")
+    val properties = loadProperties("${rootDir}\\local.properties")
+    ext["signing.keyId"] = properties.propertyString("signing.keyId")
+    ext["signing.password"] = properties.propertyString("signing.password")
+    ext["signing.secretKeyRingFile"] = properties.propertyString("signing.secretKeyRingFile")
+    ext["ossrhUsername"] = properties.propertyString("ossrhUsername")
+    ext["ossrhPassword"] = properties.propertyString("ossrhPassword")
+} else {
+    println("No props file, loading env vars")
+    ext["signing.keyId"] = System.getenv("SIGNING_KEY_ID") ?: ""
+    ext["signing.password"] = System.getenv("SIGNING_PASSWORD") ?: ""
+    ext["signing.secretKeyRingFile"] = System.getenv("SIGNING_SECRET_KEY_RING_FILE") ?: ""
+    ext["ossrhUsername"] = System.getenv("OSSRH_USERNAME") ?: ""
+    ext["ossrhPassword"] = System.getenv("OSSRH_PASSWORD") ?: ""
+}
+
+//endregion
 
 android {
     compileSdkVersion(LibConfiguration.compileSdkVersion)
@@ -65,10 +88,43 @@ afterEvaluate {
                             name.set(LibConfiguration.developerName)
                         }
                     }
+                    scm {
+                        connection.set(LibConfiguration.scmConnection)
+                        developerConnection.set(LibConfiguration.scmDeveloperConnection)
+                        url.set(LibConfiguration.scmUrl)
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                name = "sonatype" // Sonatype / MavenCentral
+
+                val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                // You only need this if you want to publish snapshots, otherwise just set the URL
+                // to the release repo directly
+
+                setUrl(if(version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+
+                // The username and password we've fetched earlier
+                credentials {
+                    // Getting OSSRH Maven Central user and key from properties file
+                    val properties = loadProperties("${rootDir}\\local.properties")
+                    val ossrhUsername = properties.propertyString("ossrhUsername")
+                    val ossrhPassword = properties.propertyString("ossrhPassword")
+
+                    username = ossrhUsername
+                    password = ossrhPassword
                 }
             }
         }
     }
+}
+
+
+signing {
+    sign(publishing.publications)
 }
 
 bintray {
