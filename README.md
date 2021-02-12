@@ -46,7 +46,7 @@ The minimum Android API is API 11 (Android 3.0 Honeycomb).
 
 ## To use in Xamarin.Android
 
-To add the component in yout project, install the [NuGet package](https://www.nuget.org/packages/Br.AlexandreHtrb.IridescentView/):
+To add the component in your project, install the [NuGet package](https://www.nuget.org/packages/Br.AlexandreHtrb.IridescentView/):
 
 ```
 Install-Package Br.AlexandreHtrb.IridescentView -Version 1.0.0
