@@ -2,7 +2,7 @@
 
 [Read in english](README.md)
 
-<video controls="controls" src="iridescent_star.mp4" />
+https://github.com/alexandrehtrb/IridescentView/assets/27026741/fbc5220f-5533-4ddc-9238-d2edb383b4d5
 
 ![IridescentGlobe](iridescent_globe.jpg)
 
