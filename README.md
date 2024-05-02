@@ -2,7 +2,7 @@
 
 [Ler em português](README_pt.md)
 
-![IridescentStar](iridescent_star.gif)
+<video controls="controls" src="iridescent_star.mp4" />
 
 ![IridescentGlobe](iridescent_globe.jpg)
 
